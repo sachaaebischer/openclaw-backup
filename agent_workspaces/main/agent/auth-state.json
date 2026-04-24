@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "lastGood": {
+    "minimax": "minimax:global"
+  },
+  "usageStats": {
+    "minimax:global": {
+      "errorCount": 0,
+      "lastUsed": 1777038833835
+    }
+  }
+}
