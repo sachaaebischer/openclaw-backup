@@ -1,0 +1,202 @@
+{
+  "meta": {
+    "lastTouchedVersion": "2026.4.21",
+    "lastTouchedAt": "2026-04-23T13:54:01.921Z"
+  },
+  "agents": {
+    "defaults": {
+      "model": {
+        "primary": "minimax/MiniMax-M2.7",
+        "fallbacks": [
+          "anthropic/claude-sonnet-4-20250514"
+        ]
+      },
+      "workspace": "/home/sacha/.openclaw/workspace",
+      "maxConcurrent": 4,
+      "subagents": {
+        "maxConcurrent": 8
+      }
+    },
+    "list": [
+      {
+        "id": "main",
+        "name": "OpenClaw",
+        "workspace": "/home/sacha/.openclaw/workspace",
+        "model": {
+          "primary": "minimax/MiniMax-M2.7"
+        },
+        "default": true
+      },
+      {
+        "id": "fitness",
+        "name": "Coach",
+        "workspace": "/home/sacha/.openclaw/agents/fitness/workspace",
+        "model": {
+          "primary": "minimax/MiniMax-M2.7"
+        }
+      }
+    ]
+  },
+  "messages": {
+    "ackReactionScope": "group-mentions"
+  },
+  "commands": {
+    "native": "auto",
+    "nativeSkills": "auto"
+  },
+  "hooks": {
+    "internal": {
+      "entries": {
+        "session-memory": {
+          "enabled": true
+        },
+        "command-logger": {
+          "enabled": true
+        }
+      }
+    }
+  },
+  "channels": {
+    "telegram": {
+      "enabled": true,
+      "dmPolicy": "pairing",
+      "groupPolicy": "allowlist",
+      "streaming": {
+        "mode": "partial"
+      },
+      "accounts": {
+        "default": {
+          "botToken": "8065384421:AAGS-QnHLbb8CgMSRqwNw7NhmYmYdp2aeS8"
+        },
+        "fitness": {
+          "botToken": "8357659123:AAFm_WLG2XzfB6lSf_7BhQHurhQYh9Ep3Ik"
+        }
+      }
+    }
+  },
+  "gateway": {
+    "port": 18789,
+    "mode": "local",
+    "controlUi": {
+      "allowedOrigins": [
+        "*"
+      ]
+    },
+    "auth": {
+      "mode": "token",
+      "token": "2b9989cbc19109cc34648b52ba0635d8ded4b05beba9af80"
+    }
+  },
+  "plugins": {
+    "entries": {
+      "telegram": {
+        "enabled": true
+      },
+      "anthropic": {
+        "enabled": true
+      },
+      "brave": {
+        "enabled": true,
+        "config": {
+          "webSearch": {
+            "apiKey": "BSAg2vnYDMiCpEpRdJuDySxCq92AW0q",
+            "mode": "web"
+          }
+        }
+      },
+      "acpx": {
+        "enabled": true
+      },
+      "codex": {
+        "enabled": false,
+        "config": {}
+      },
+      "openai": {
+        "enabled": true
+      },
+      "minimax": {
+        "enabled": true
+      }
+    }
+  },
+  "models": {
+    "providers": {
+      "minimax": {
+        "baseUrl": "https://api.minimax.io/anthropic",
+        "apiKey": "<REDACTED_API_KEY>",
+        "models": [
+          {
+            "name": "MiniMax-M2.7",
+            "id": "MiniMax-M2.7",
+            "contextWindow": 200000,
+            "maxTokens": 8192
+          }
+        ]
+      },
+      "anthropic": {
+        "baseUrl": "https://api.anthropic.com",
+        "apiKey": "<REDACTED_API_KEY>",
+        "models": [
+          {
+            "name": "claude-sonnet-4-20250514",
+            "id": "claude-sonnet-4-20250514",
+            "contextWindow": 200000,
+            "maxTokens": 8192
+          }
+        ]
+      }
+    }
+  },
+  "bindings": [
+    {
+      "agentId": "main",
+      "match": {
+        "channel": "telegram",
+        "accountId": "default"
+      }
+    },
+    {
+      "agentId": "fitness",
+      "match": {
+        "channel": "telegram",
+        "accountId": "fitness"
+      }
+    }
+  ],
+  "mcp": {
+    "servers": {
+      "ultrahuman": {
+        "command": "npx",
+        "args": [
+          "-y",
+          "ultrahuman-mcp"
+        ],
+        "env": {
+          "ULTRAHUMAN_AUTH_TOKEN": "<REDACTED>",
+          "ULTRAHUMAN_USER_EMAIL": "sacha.aebischer@gmail.com"
+        }
+      },
+      "garmin": {
+        "command": "npx",
+        "args": [
+          "-y",
+          "@nicolasvegam/garmin-connect-mcp"
+        ],
+        "env": {
+          "GARMIN_EMAIL": "sacha.aebischer@gmail.com",
+          "GARMIN_PASSWORD": "<REDACTED>"
+        }
+      },
+      "polar": {
+        "command": "node",
+        "args": [
+          "/tmp/polar-mcp-repo/dist/index.js"
+        ],
+        "env": {
+          "POLAR_ACCESS_TOKEN": "<REDACTED>",
+          "POLAR_USER_ID": "64270938"
+        }
+      }
+    }
+  }
+}

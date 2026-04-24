@@ -1,0 +1,42 @@
+[
+  {
+    "id": "bench-press",
+    "name": "Bench Press Dumbbells",
+    "note": "Flat bench with dumbbells. 4×5 @ 28kg. Rest 3min between sets."
+  },
+  {
+    "id": "pull-ups",
+    "name": "Pull-ups (Bodyweight)",
+    "note": "4×8-10 reps. Rest 90sec between sets. Add weight via belt if progressing."
+  },
+  {
+    "id": "overhead-press",
+    "name": "Overhead Press Smith Machine",
+    "note": "3×8 @ 40kg. Rest 90sec between sets. Weight added per side."
+  },
+  {
+    "id": "dips",
+    "name": "Dips (Weighted)",
+    "note": "3×8-10. Add weight (vest or belt) when 10 reps feels solid. Rest 60sec."
+  },
+  {
+    "id": "face-pulls",
+    "name": "Face Pulls (Cable)",
+    "note": "3×15 @ 25kg cable. Rest 60sec between sets."
+  },
+  {
+    "id": "russian-twists",
+    "name": "Russian Twists",
+    "note": "3 rounds × 20 reps. Rest 90sec between rounds."
+  },
+  {
+    "id": "leg-raises",
+    "name": "Hanging Leg Raises",
+    "note": "3 rounds × 15 reps. Rest 90sec between rounds."
+  },
+  {
+    "id": "kettlebell-swings",
+    "name": "Kettlebell Swings",
+    "note": "3 rounds × 15 reps @ moderate weight. Rest 90sec between rounds."
+  }
+]
