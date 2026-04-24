@@ -152,7 +152,7 @@
           "maxTokens": 8192
         }
       ],
-      "apiKey": "sk-api-NQ-TXPGk6sxJa9mbJdvwwJnOM2CK4cLhAqW-nyMxUtD-MRv371dReKJVJsxqolCjwLmPwnJ_PRFqLXN484nygOxbPGi8EPGC92iNhZ3DBloX9Tpwd-cWLyE"
+      "apiKey": "<REDACTED_MINIMAX>"
     },
     "minimax-cn": {
       "baseUrl": "https://api.minimax.io/anthropic/v1",
@@ -166,11 +166,11 @@
           "maxTokens": 8192
         }
       ],
-      "apiKey": "sk-api-NQ-TXPGk6sxJa9mbJdvwwJnOM2CK4cLhAqW-nyMxUtD-MRv371dReKJVJsxqolCjwLmPwnJ_PRFqLXN484nygOxbPGi8EPGC92iNhZ3DBloX9Tpwd-cWLyE"
+      "apiKey": "<REDACTED_MINIMAX>"
     },
     "anthropic": {
       "baseUrl": "https://api.anthropic.com",
-      "apiKey": "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",
+      "apiKey": "<REDACTED_ANTHROPIC>",
       "models": [
         {
           "name": "claude-sonnet-4-20250514",

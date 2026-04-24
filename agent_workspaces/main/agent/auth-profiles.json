@@ -4,7 +4,7 @@
     "minimax:global": {
       "type": "api_key",
       "provider": "minimax",
-      "key": "sk-api-NQ-TXPGk6sxJa9mbJdvwwJnOM2CK4cLhAqW-nyMxUtD-MRv371dReKJVJsxqolCjwLmPwnJ_PRFqLXN484nygOxbPGi8EPGC92iNhZ3DBloX9Tpwd-cWLyE"
+      "key": "<REDACTED_MINIMAX>"
     }
   }
 }

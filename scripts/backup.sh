@@ -98,3 +98,9 @@ else
 fi
 
 echo "[$TIMESTAMP] Backup complete"
+
+# Also redact agent config files (API keys)
+find agent_workspaces -name "*.json" -exec sed -i \
+    -e 's/sk-ant-api03-[A-Za-z0-9_-]*/<REDACTED_ANTHROPIC>/g' \
+    -e 's/sk-api-NQ-[A-Za-z0-9_-]*/<REDACTED_MINIMAX>/g' \
+    {} \;
