@@ -86,3 +86,10 @@ If everything is down and the above doesn't work:
 1. Check `~/.openclaw/logs/` for errors
 2. Run `openclaw status` 
 3. Check `tail -f ~/.openclaw/logs/*.log`
+
+### Withings MCP
+- Clone: `git clone https://github.com/Schimmilab/withings-mcp-server.git /tmp/withings-mcp`
+- Install: `python3.12 -m pip install -e /tmp/withings-mcp --break-system-packages`
+- Tokens stored in: `/tmp/withings-mcp/.env` (also backed up to `~/Projects/gym-logger/backup/withings.env`)
+- OpenClaw config: `openclaw mcp set withings {...}` (already configured)
+- Devices: Body Cardio + ScanWatch

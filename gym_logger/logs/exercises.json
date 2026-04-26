@@ -2,32 +2,32 @@
   {
     "id": "bench-press",
     "name": "Bench Press Dumbbells",
-    "note": "Flat bench with dumbbells. 4×5 @ 28kg. Rest 3min between sets."
+    "note": "4×5 @ 32kg. Rest 3min between sets."
   },
   {
     "id": "pull-ups",
     "name": "Pull-ups (Bodyweight)",
-    "note": "4×8-10 reps. Rest 90sec between sets. Add weight via belt if progressing."
+    "note": "4×8+ reps. Rest 90sec between B1/B2."
   },
   {
     "id": "overhead-press",
     "name": "Overhead Press Smith Machine",
-    "note": "3×8 @ 40kg. Rest 90sec between sets. Weight added per side."
+    "note": "3×8 @ 20kg. Rest 90sec."
   },
   {
     "id": "dips",
     "name": "Dips (Weighted)",
-    "note": "3×8-10. Add weight (vest or belt) when 10 reps feels solid. Rest 60sec."
+    "note": "3×8 @ 17.5kg. Rest 60sec."
   },
   {
     "id": "face-pulls",
     "name": "Face Pulls (Cable)",
-    "note": "3×15 @ 25kg cable. Rest 60sec between sets."
+    "note": "3×15 @ 22.5kg. Rest 60sec."
   },
   {
     "id": "russian-twists",
     "name": "Russian Twists",
-    "note": "3 rounds × 20 reps. Rest 90sec between rounds."
+    "note": "3×20 + 20 KB Swings + 8 Burpees. 3 rounds. 90sec rest between rounds."
   },
   {
     "id": "leg-raises",
@@ -37,6 +37,26 @@
   {
     "id": "kettlebell-swings",
     "name": "Kettlebell Swings",
-    "note": "3 rounds × 15 reps @ moderate weight. Rest 90sec between rounds."
+    "note": "3×20. Part of conditioning circuit."
+  },
+  {
+    "id": "17770592707710.3314799809825095",
+    "name": "Back Squat",
+    "note": "4×6 @ 100kg. Target RPE 7-8. Rest 3min."
+  },
+  {
+    "id": "17770592707710.6388079012112402",
+    "name": "Bent Over Barbell Row",
+    "note": "4×8 @ 70kg. Rest 90sec."
+  },
+  {
+    "id": "17770592707710.0941135805416966",
+    "name": "Romanian Deadlift",
+    "note": "3×10 @ 65kg. Rest 60sec."
+  },
+  {
+    "id": "17770592707710.3981242023657183",
+    "name": "Plank",
+    "note": "3×45sec. Rest 60sec."
   }
 ]

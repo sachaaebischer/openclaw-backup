@@ -70,12 +70,31 @@ Example:
 
 ---
 
+## ⚖️ Withings (Body Scan + ScanWatch)
+**MCP prefix:** `withings__` (native Python MCP server)
+
+**Key ones for coaching:**
+- `withings__get_measurements` — body weight, fat mass, muscle mass, bone mass, water %, impedance
+- `withings__get_heart_rate` — heart rate measurements
+- `withings__get_sleep_summary` — sleep duration, deep/REM sleep, wake-up count, breathing disturbances
+- `withings__get_sleep_details` — detailed sleep phases
+- `withings__get_activity` — steps, calories, distance
+- `withings__get_workouts` — training sessions
+- `withings__get_user_info` — account info
+
+**Devices:** Body Cardio (scale), ScanWatch (hybrid watch)
+
+**Note:** Impedance data is useful for body composition tracking (fat % vs muscle).
+
+---
+
 ## 📋 Suggested Workflow
 
-1. **Morning check:** Ultrahuman recovery index + Garmin training readiness + Polar nightly recharge
-2. **Post-workout:** Gym logger CSV entry confirmation, Garmin activity if outdoor
+1. **Morning check:** Ultrahuman recovery index + Garmin training readiness + Polar nightly recharge + Withings sleep
+2. **Post-workout:** Gym logger CSV entry confirmation, Garmin/Polar activity if outdoor
 3. **Weekly review:** Pull 7-day data from all sources → assess training load vs recovery balance
-4. **Plan adjustments:** Use HRV trends, sleep quality, and training status to adjust upcoming workout intensity
+4. **Body composition:** Withings measurements (weight, fat %, muscle mass) — track trends over weeks
+5. **Plan adjustments:** Use HRV trends, sleep quality, readiness, and body composition to adjust upcoming workout intensity
 
 ---
 
@@ -84,3 +103,4 @@ Example:
 - All health data is **personal and private** — never share it externally
 - The gym logger CSV is at `~/Projects/gym-logger/logs/` — you have read access
 - When analyzing workouts, cross-reference with the day's HR/HRV/recovery data
+- You now have **4 health data sources**: Ultrahuman, Garmin, Polar, Withings — use them together for a complete picture

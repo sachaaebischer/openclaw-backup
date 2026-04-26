@@ -81,3 +81,13 @@ else
 fi
 
 echo "[$TIMESTAMP] Backup complete"
+
+# --- Withings MCP ---
+if [ -d "/tmp/withings-mcp" ]; then
+    mkdir -p "$REPO_DIR/withings_mcp"
+    # Backup tokens (in .env)
+    cp /tmp/withings-mcp/.env "$REPO_DIR/withings_mcp/.env" 2>/dev/null || true
+    # Backup source (no node_modules)
+    cp -r /tmp/withings-mcp/src "$REPO_DIR/withings_mcp/" 2>/dev/null || true
+    cp /tmp/withings-mcp/pyproject.toml /tmp/withings-mcp/generate_tokens.py "$REPO_DIR/withings_mcp/" 2>/dev/null || true
+fi

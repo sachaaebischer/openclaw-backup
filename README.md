@@ -2,7 +2,7 @@
 
 **Repository:** https://github.com/sachaaebischer/openclaw-backup  
 **Backup frequency:** Weekly (Sunday 03:00) + manual runs  
-**Last backup: 2026-04-24 14:14
+**Last backup: 2026-04-26 11:26
 
 ---
 

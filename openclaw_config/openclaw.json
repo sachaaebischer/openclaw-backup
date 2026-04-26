@@ -1,7 +1,7 @@
 {
   "meta": {
     "lastTouchedVersion": "2026.4.21",
-    "lastTouchedAt": "2026-04-23T13:54:01.921Z"
+    "lastTouchedAt": "2026-04-26T11:11:35.420Z"
   },
   "agents": {
     "defaults": {
@@ -196,6 +196,21 @@
           "POLAR_ACCESS_TOKEN": "<REDACTED>",
           "POLAR_USER_ID": "64270938"
         }
+      },
+      "withings": {
+        "command": "python3.12",
+        "args": [
+          "-m",
+          "withings_mcp_server"
+        ],
+        "env": {
+          "WITHINGS_CLIENT_ID": "798d1f38f093921238453441ba2bcad7c946a47b1cf126529fc46f7964f85a32",
+          "WITHINGS_CLIENT_SECRET": "<REDACTED>",
+          "WITHINGS_ACCESS_TOKEN": "<REDACTED>",
+          "WITHINGS_REFRESH_TOKEN": "<REDACTED>",
+          "WITHINGS_REDIRECT_URI": "http://localhost:8080/callback"
+        },
+        "cwd": "/tmp/withings-mcp"
       }
     }
   }

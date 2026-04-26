@@ -4,7 +4,15 @@
 - **What to call them:** Sacha
 - **Pronouns:** _(unknown for now)_
 - **Timezone:** Europe/Zurich (Switzerland, CET/CEST)
-- **Notes:** Active mixed-sport athlete. 3 years gym experience. Primary sport: floorball (Mondays & Fridays, games every other weekend). Off-season starts now. Also rides racing bike (summer/spring/fall only, ~once a week), occasional bouldering/tennis/paddle, summer swimming. Torn lateral ligaments right foot — almost healed, monitor closely.
+- **Max HR:** ~196-197 bpm (age-estimated, unconfirmed — test in week 4 of off-season)
+- **Resting HR (recovered):** ~43bpm
+- **Target HR Zones:**
+  - Z2: 118-137 bpm (60-70% max)
+  - Z3: 137-157 bpm (70-80% max)
+  - Z4: 157-177 bpm (80-90% max)
+  - Z5: 177-196 bpm (90-100% max)
+- **Fitness goals:** Floorball performance + general strength + muscle growth
+- **No specific floorball training history** — previously bodybuilder-style gym program. Off-season is opportunity to shift toward floorball-specific supplemental training.
 
 ## Context
 

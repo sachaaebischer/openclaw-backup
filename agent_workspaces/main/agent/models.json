@@ -146,10 +146,20 @@
       "authHeader": true,
       "models": [
         {
-          "name": "MiniMax-M2.7",
           "id": "MiniMax-M2.7",
+          "name": "MiniMax-M2.7",
           "contextWindow": 200000,
-          "maxTokens": 8192
+          "maxTokens": 8192,
+          "reasoning": false,
+          "input": [
+            "text"
+          ],
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          }
         }
       ],
       "apiKey": "<REDACTED_MINIMAX>"
@@ -160,10 +170,20 @@
       "authHeader": true,
       "models": [
         {
-          "name": "MiniMax-M2.7",
           "id": "MiniMax-M2.7",
+          "name": "MiniMax-M2.7",
           "contextWindow": 200000,
-          "maxTokens": 8192
+          "maxTokens": 8192,
+          "reasoning": false,
+          "input": [
+            "text"
+          ],
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          }
         }
       ],
       "apiKey": "<REDACTED_MINIMAX>"
@@ -173,10 +193,21 @@
       "apiKey": "<REDACTED_ANTHROPIC>",
       "models": [
         {
-          "name": "claude-sonnet-4-20250514",
           "id": "claude-sonnet-4-20250514",
+          "name": "claude-sonnet-4-20250514",
           "contextWindow": 200000,
-          "maxTokens": 8192
+          "maxTokens": 8192,
+          "reasoning": false,
+          "input": [
+            "text"
+          ],
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          },
+          "api": "anthropic-messages"
         }
       ],
       "api": "anthropic-messages"
