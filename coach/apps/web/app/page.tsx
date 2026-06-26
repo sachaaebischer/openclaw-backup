@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getDashboardData, todayStr } from "@/lib/data";
 import { LoadChart, SleepHrvChart } from "@/app/components/Charts";
 import { Markdown } from "@/app/components/Markdown";
+import { PlanSessionCard, typeIcon } from "@/app/components/PlanSessionCard";
 import type { HealthDaily } from "@coach/lib";
 
 export const dynamic = "force-dynamic";
@@ -62,21 +63,6 @@ function Stat({
   );
 }
 
-const intensityColor: Record<string, string> = {
-  hard: "bg-bad/20 text-bad",
-  moderate: "bg-warn/20 text-warn",
-  easy: "bg-good/20 text-good",
-};
-
-const typeIcon: Record<string, string> = {
-  gym: "🏋️",
-  floorball: "🏑",
-  bike: "🚴",
-  cycling: "🚴",
-  run: "🏃",
-  running: "🏃",
-  rest: "😴",
-};
 
 export default async function DashboardPage() {
   const { health, latest, prev, activities, plan, analysis, sync } = await getDashboardData();
@@ -134,35 +120,13 @@ export default async function DashboardPage() {
                 </div>
                 <div className="mt-2 space-y-2">
                   {day.sessions.length === 0 && <div className="text-sm text-muted">—</div>}
-                  {day.sessions.map((s, i) => {
-                    const gymLink = s.type === "gym" ? `/gym/${day.date}` : null;
-                    const body = (
-                      <div className="flex items-start gap-2">
-                        <span>{typeIcon[s.type] ?? "•"}</span>
-                        <div className="min-w-0">
-                          <div className="truncate text-sm font-medium">{s.title}</div>
-                          <div className="text-xs text-muted">
-                            {s.planned_at && `${s.planned_at} · `}
-                            {s.duration_min ? `${s.duration_min} min` : ""}
-                          </div>
-                        </div>
-                        {s.intensity && (
-                          <span className={`pill ml-auto ${intensityColor[s.intensity] ?? "bg-cardborder text-muted"}`}>
-                            {s.intensity}
-                          </span>
-                        )}
-                      </div>
-                    );
-                    return gymLink ? (
-                      <Link key={i} href={gymLink} className="block rounded-lg p-1 hover:bg-white/5">
-                        {body}
-                      </Link>
-                    ) : (
-                      <div key={i} className="p-1">
-                        {body}
-                      </div>
-                    );
-                  })}
+                  {day.sessions.map((s, i) => (
+                    <PlanSessionCard
+                      key={i}
+                      session={s}
+                      gymDate={s.type === "gym" ? `/gym/${day.date}` : undefined}
+                    />
+                  ))}
                 </div>
               </div>
             ))}
