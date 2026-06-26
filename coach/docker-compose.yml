@@ -1,0 +1,34 @@
+services:
+  # Web app: dashboard + gym-logger.
+  web:
+    build: .
+    command: ["npm", "run", "start", "--workspace", "@coach/web"]
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - COACH_DATA_DIR=/data
+      - COACH_CONFIG_DIR=/config
+    volumes:
+      - ${COACH_DATA_DIR:-./data}:/data
+      - ${COACH_CONFIG_DIR:-./config}:/config
+    restart: unless-stopped
+
+  # Scheduler: drives the tracker MCP servers on cron and writes /data.
+  fetcher:
+    build: .
+    command: ["npm", "run", "scheduler"]
+    environment:
+      - NODE_ENV=production
+      - COACH_DATA_DIR=/data
+      - COACH_CONFIG_DIR=/config
+      - COACH_FETCH_ON_START=1
+    volumes:
+      - ${COACH_DATA_DIR:-./data}:/data
+      - ${COACH_CONFIG_DIR:-./config}:/config
+    restart: unless-stopped
+
+# To let the OpenClaw coach agent read/write the same files, point COACH_DATA_DIR
+# at the path inside the agent's directory, e.g.:
+#   COACH_DATA_DIR=/opt/openclaw/agents/coach/data docker compose up -d
+# The agent then reads data/health, data/activities, … and writes data/plan + data/analysis.

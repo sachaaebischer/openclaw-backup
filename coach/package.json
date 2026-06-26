@@ -1,0 +1,25 @@
+{
+  "name": "coach",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "lib",
+    "apps/*"
+  ],
+  "scripts": {
+    "fetch": "npm run fetch --workspace @coach/fetcher --",
+    "scheduler": "npm run start --workspace @coach/fetcher",
+    "summarize": "npm run summarize --workspace @coach/fetcher",
+    "validate-plan": "npm run validate-plan --workspace @coach/fetcher",
+    "dev": "npm run dev --workspace @coach/web",
+    "build": "npm run build --workspace @coach/web",
+    "typecheck": "tsc -b lib apps/fetcher",
+    "mock-server": "tsx apps/fetcher/test/mock-mcp-server.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  }
+}

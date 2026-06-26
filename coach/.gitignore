@@ -1,0 +1,26 @@
+node_modules/
+dist/
+.next/
+*.tsbuildinfo
+.DS_Store
+.env
+.env.local
+
+# Keep the data directory structure but not its contents (real health data).
+# Comment these out if you want the coach agent's files version-controlled.
+data/raw/
+data/health/*.csv
+data/activities/*.csv
+data/gym/sessions/
+data/gym/*.csv
+data/state/
+
+# Logs
+*.log
+sync.log
+
+# OpenClaw launch config (server-specific)
+.claude/
+
+# Data plan files that contain personal schedule data - comment out if you want these
+data/plan/

@@ -1,0 +1,43 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body {
+  background: #0b0f14;
+  color: #e6edf3;
+  -webkit-font-smoothing: antialiased;
+}
+
+@layer components {
+  .card {
+    @apply rounded-2xl border border-cardborder bg-card p-4 shadow-sm;
+  }
+  .stat {
+    @apply text-2xl font-semibold tabular-nums;
+  }
+  .label {
+    @apply text-xs uppercase tracking-wide text-muted;
+  }
+  .pill {
+    @apply inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium;
+  }
+  .btn {
+    @apply rounded-xl bg-accent px-4 py-2 font-medium text-bg active:scale-95 transition;
+  }
+  .btn-ghost {
+    @apply rounded-xl border border-cardborder px-3 py-2 text-sm text-muted active:scale-95 transition;
+  }
+  .input {
+    @apply w-full rounded-lg border border-cardborder bg-bg px-2 py-2 text-center tabular-nums outline-none focus:border-accent;
+  }
+}
+
+/* Markdown rendering for the coach analysis */
+.prose-coach h1 { @apply text-xl font-semibold mt-4 mb-2; }
+.prose-coach h2 { @apply text-lg font-semibold mt-4 mb-1; }
+.prose-coach h3 { @apply text-base font-semibold mt-3 mb-1; }
+.prose-coach p { @apply my-2 text-sm leading-relaxed; }
+.prose-coach ul { @apply list-disc pl-5 my-2 text-sm space-y-1; }
+.prose-coach strong { @apply text-white; }
+.prose-coach em { @apply text-muted not-italic; }
