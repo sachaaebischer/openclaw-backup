@@ -1,0 +1,77 @@
+{
+  "version": 1,
+  "jobs": [
+    {
+      "id": "eab07fb0-24a8-4d71-ac36-0bbda16add3c",
+      "agentId": "fitness",
+      "name": "Daily Summary",
+      "enabled": true,
+      "deleteAfterRun": true,
+      "createdAtMs": 1779381873960,
+      "schedule": {
+        "kind": "cron",
+        "expr": "30 7 * * *",
+        "tz": "Europe/Zurich"
+      },
+      "sessionTarget": "isolated",
+      "wakeMode": "now",
+      "payload": {
+        "kind": "agentTurn",
+        "message": "Good morning — produce Sacha's Daily Summary (deliver to Telegram).\n\nGather:\n1. GET http://localhost:3000/api/health — latest recovery_index, hrv_avg, resting_hr, sleep_score, sleep_duration_min, plus the 30-day trend (compare today vs trend).\n2. GET http://localhost:3000/api/today — today's planned session(s).\n3. Today's weather in Düdingen: run  cd /home/sacha/coach && npm run weather --workspace @coach/fetcher\n\nThen write a concise, friendly morning message:\n- 📅 Today: the planned session + its key focus (from /api/today; if \"Rest\", say so).\n- 🔋 Body: recovery & HRV trend (good/moderate/low vs baseline), sleep score & duration, resting HR.\n- 🌤️ Weather: today's Düdingen forecast.\n- 💡 2-3 practical tips for today, tailored to the data + weather + plan (e.g. low recovery → dial intensity back; hard session + hot day → hydration & timing; rest day → mobility). Be specific, not generic.\n\nKeep it tight and motivating. Under ~1 minute to read.",
+        "timeoutSeconds": 240
+      },
+      "delivery": {
+        "mode": "announce",
+        "channel": "telegram",
+        "to": "telegram:7789196354"
+      },
+      "state": {}
+    },
+    {
+      "id": "9527afad-92c9-4cda-ad48-cb029b229548",
+      "agentId": "fitness",
+      "name": "Weekly Plan",
+      "enabled": true,
+      "createdAtMs": 1782275993941,
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 17 * * 0",
+        "tz": "Europe/Zurich"
+      },
+      "sessionTarget": "isolated",
+      "wakeMode": "now",
+      "payload": {
+        "kind": "agentTurn",
+        "message": "Weekly planning for Sacha. All data is in /home/sacha/.openclaw/agents/fitness/workspace/data (see DATA_SOURCES.md).\n\n0. FIRST: check data/plan/constraints/<next-monday>.json (where <next-monday> is the Monday of the week you're planning). If it exists, list the fixed events so you know which days are committed before you plan anything else.\n1. Read data/state/summary.json (7d/28d rollups), the recent rows of data/health/daily.csv and data/activities/activities.csv, data/gym/log.csv (lift progression), and data/plan/mesocycle.json.\n2. Decide next week's training across floorball / gym / bike, respecting recovery signals, progressive overload from the gym log, and the fixed events from step 0.\n3. Write next week's plan to data/plan/current.json -- schema in data/README.md: week_start = the coming Monday, include all 7 days; for gym sessions fill exercises with target_sets / target_reps / target_weight. Mirror a human-readable version to data/plan/current.md.\n4. Write data/analysis/latest.md explaining the week's reasoning and any changes from last week.\n5. Validate: from /home/sacha/coach run  COACH_DATA_DIR=/home/sacha/.openclaw/agents/fitness/workspace/data npm run validate-plan --workspace @coach/fetcher  and fix until it prints 'Plan OK'.\n\nReply with a short summary of the new plan.",
+        "timeoutSeconds": 600
+      },
+      "delivery": {
+        "mode": "announce",
+        "channel": "telegram",
+        "to": "7789196354"
+      },
+      "state": {}
+    },
+    {
+      "id": "3b906809-7aae-4b7e-bf97-6218dce2eded",
+      "agentId": "fitness",
+      "name": "Weekly Constraints Reminder",
+      "enabled": true,
+      "createdAtMs": 1782472069134,
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 15 * * 0",
+        "tz": "Europe/Zurich"
+      },
+      "sessionTarget": "isolated",
+      "wakeMode": "now",
+      "payload": {
+        "kind": "agentTurn",
+        "message": "Sunday constraint check (15:00). Compute next Monday's date. Check if the file data/plan/constraints/<next-monday>.json exists and contains at least one fixed_event.\n\n- If the file is MISSING or has zero events: send Sacha a Telegram message asking him to fill in his fixed sessions before the weekly plan runs at 17:00. Example: 'Don't forget to add your fixed sessions for next week before I start planning at 17:00! Open the dashboard: http://openclaw:3000/plan'\n- If events ARE already there: stay silent, no message needed.\n\nDo nothing else.",
+        "timeoutSeconds": 60
+      },
+      "delivery": {},
+      "state": {}
+    }
+  ]
+}
