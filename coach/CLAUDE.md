@@ -1,100 +1,159 @@
 # CLAUDE.md — OpenClaw Coach Agent
 
-This is Sacha's personal fitness/health coaching system. It runs on a home server (VM) and combines multiple fitness data sources into a single coach agent powered by OpenClaw AI.
+This is Sacha's personal fitness/health coaching system running on a home server VM at 192.168.0.52.
+SSH: `ssh sacha@192.168.0.52` (key at `~/.ssh/id_ed25519` from the dev machine).
 
 ## What this project is
 
-- **`lib/`** — Shared TypeScript library. Zod schemas are the single source of truth for all data shapes. `paths.ts` centralises all file paths. `store.ts` has typed read/write helpers. Always `npm run build --workspace @coach/lib` before building the apps.
-- **`apps/fetcher/`** — Data sync daemon. `npm run fetch` runs `sync.ts`, which reads `config/sources.json` and calls each enabled source via MCP (`stdio` or `http`) or direct REST adapters (Withings uses its own OAuth flow).
-- **`apps/web/`** — Next.js 14 (App Router) dashboard. Served on port 3000 by pm2 processes `coach-3000` / `coach-3001`. Routes: `/` dashboard, `/gym` gym logger, `/plan` weekly constraints.
-- **`agent/`** — Markdown files the OpenClaw fitness agent reads as its context (DATA_SOURCES.md, TOOLS.md). The main agent prompt file is `AGENT.md`.
-- **`config/sources.json`** — Describes each data source. Keep secrets out of here; they live in env vars passed via MCP `env` blocks or directly by adapters (e.g. Withings tokens at `~/.openclaw/withings_tokens.json`).
-- **`data/`** — CSV and JSON data files written by the fetcher and read by the web/agent. **NOT committed to git** (real health data). Lives at `/home/sacha/.openclaw/agents/fitness/workspace/data/` in production (symlinked or set via `COACH_DATA_DIR`).
-
-## Data flow
+A TypeScript monorepo with three parts that work together:
 
 ```
-Fitness devices/APIs
-    → apps/fetcher (MCP / REST adapters, ~every hour via pm2)
-    → data/raw/<source>/<date>.json  (raw)
-    → data/health/<date>.csv         (normalised health daily)
-    → data/activities/<date>.csv     (workouts)
-    → data/gym/sessions/<date>.json  (gym logs from web UI)
-    → data/plan/weekly/<date>.json   (coach's weekly plan)
-    → data/plan/constraints/<date>.json  (user's fixed-session constraints)
+devices/APIs → fetcher → data/ → web dashboard (read + write gym logs)
+                               → coach agent (reads everything, writes plan/analysis)
 ```
 
-## Key paths (all under COACH_DATA_DIR)
+### `lib/` — shared library
+Zod schemas are the **single source of truth** for all data shapes. Never hardcode
+field names outside lib. Always rebuild (`npm run build --workspace @coach/lib`)
+before building the apps.
 
-| Path | Description |
-|------|-------------|
-| `data/health/` | Daily health CSVs (sleep, HRV, steps, weight, …) |
-| `data/activities/` | Workout activity CSVs |
-| `data/gym/sessions/` | Gym session JSON logs |
-| `data/plan/weekly/<YYYY-MM-DD>.json` | Coach's weekly training plan |
-| `data/plan/constraints/<YYYY-MM-DD>.json` | User's fixed-event constraints for a week |
-| `data/state/sync_state.json` | Last-fetched timestamps per source |
+Key files:
+- `lib/src/schema.ts` — all Zod schemas (`HealthDailySchema`, `ActivitySchema`, `GymSessionSchema`, `GymExerciseSchema`, `PlannedSessionSchema`, `PlanSchema`, `WeekConstraintsSchema`, `ExerciseCatalogSchema`, …)
+- `lib/src/paths.ts` — all file paths (edit here when adding new data files)
+- `lib/src/store.ts` — typed read/write helpers for every data file
+- `lib/src/index.ts` — re-exports everything; import only from `@coach/lib`
 
-## Process management (pm2)
+### `apps/fetcher/` — data sync daemon
+Runs `src/sync.ts` which calls each source adapter in parallel.
+
+**Important:** `config/sources.json` is a legacy placeholder — it is NOT read by
+`sync.ts` at runtime. All adapters are hardcoded in `sync.ts` as direct REST/MCP
+adapters. Credentials come from `~/.openclaw/openclaw.json` (mcp.servers section).
+
+Adapters (`src/adapters/`):
+| Adapter | Method | Data |
+|---------|--------|------|
+| `ultrahuman.ts` | REST API with JWT token | HRV, sleep, recovery, readiness |
+| `polar.ts` | Polar AccessLink REST API | Activities (workouts) |
+| `withings.ts` | OAuth2 REST; tokens at `~/.openclaw/withings_tokens.json` | Weight |
+| `garmin.ts` | MCP stdio (`@nicolasvegam/garmin-connect-mcp`) | Activities, sleep, HRV |
+
+Scripts:
+- `npm run sync` — run full sync (last 4 days)
+- `npm run summarize` — compute 7d/28d rollups into `state/summary.json`
+
+### `apps/web/` — Next.js 14 dashboard (App Router)
+Served on port 3000 by pm2 (`coach-3000` and `coach-3001` for redundancy).
+
+Routes:
+| Route | Type | What it does |
+|-------|------|--------------|
+| `/` | Server | Dashboard: health stats, week plan, charts, recent activities, analysis |
+| `/gym` | Server | Gym index: today's session, date picker, recent sessions |
+| `/gym/[date]` | Server | Gym logger for a specific date |
+| `/gym/exercises` | Client | Exercise catalog: create/edit/delete exercises with notes |
+| `/plan` | Client | Weekly constraints: lock in fixed events (floorball, tennis, etc.) |
+
+Key client components:
+- `GymLogger.tsx` — full gym session logger with sets/reps/weight, rest timer, add/remove exercises, exercise notes, history panel, save
+- `PlanSessionCard.tsx` — clickable session card that expands to show `details`
+- `DateSessionPicker.tsx` — date input for opening any session
+- `ExerciseHistory.tsx` (inline in GymLogger) — per-exercise history panel
+
+Key API routes:
+- `POST /api/gym/[date]` — save a gym session
+- `GET/POST /api/gym/catalog` — read/write exercise catalog
+- `PUT/DELETE /api/gym/catalog/[name]` — update/delete catalog item
+- `GET /api/gym/history?exercise=X` — all historical sets for an exercise
+- `GET/POST /api/plan/constraints` — read/write weekly constraints; POST also injects a replan OpenClaw job
+
+### `agent/` — context files read by the OpenClaw fitness agent
+- `AGENT.md` — main instructions (also at `~/coach/AGENT.md`, same file)
+- `agent/DATA_SOURCES.md` — data file paths and formats
+- `agent/TOOLS.md` — available tools
+
+## Data directory
+
+Production data lives at:
+`/home/sacha/.openclaw/agents/fitness/workspace/data/`
+
+Set via `COACH_DATA_DIR` env var. During development without that var, falls back to
+`lib/../../data/` (i.e. `~/coach/data/`).
+
+See `data/README.md` for the complete schema of every file.
+
+## Running things
 
 ```bash
-pm2 list                    # see coach-3000, coach-3001 (web), fetcher processes
-pm2 restart coach-3000      # restart web
-pm2 logs coach-3000         # tail logs
-```
+# SSH to server
+ssh sacha@192.168.0.52
 
-## Build & run (local development)
+# Build lib (always first)
+cd ~/coach && npm run build --workspace @coach/lib
 
-```bash
-# 1. Build shared lib first (always required before apps)
-npm run build --workspace @coach/lib
-
-# 2. Build/run web
-cd apps/web && npm run build && npm start   # or npm run dev
-
-# 3. Run fetcher once
+# Manual data sync
 COACH_DATA_DIR=/home/sacha/.openclaw/agents/fitness/workspace/data \
-  npm run fetch --workspace @coach/fetcher
+  npm run sync --workspace @coach/fetcher
 
-# 4. Summarise data for agent
+# Run summarize (updates state/summary.json for agent)
 COACH_DATA_DIR=/home/sacha/.openclaw/agents/fitness/workspace/data \
   npm run summarize --workspace @coach/fetcher
+
+# Build and restart web
+cd ~/coach/apps/web && npm run build
+~/.npm-global/bin/pm2 restart coach-3000 coach-3001
+
+# Check pm2 logs
+~/.npm-global/bin/pm2 logs coach-3000 --lines 50
+
+# Push backup to GitHub
+bash ~/coach/scripts/push-backup.sh
 ```
+
+## Automation schedule
+
+| What | When | How |
+|------|------|-----|
+| Data sync (fetcher) | 06:30, 12:30, 18:30 daily | crontab |
+| GitHub backup | Sunday 03:00 | crontab |
+| Daily Summary (coach) | 07:30 daily | OpenClaw cron |
+| Weekly Plan (coach) | Sunday 17:00 | OpenClaw cron |
+| Constraints Reminder | Sunday 15:00 | OpenClaw cron |
+| PM2 resurrect on boot | @reboot | crontab |
+
+OpenClaw cron jobs live in `~/.openclaw/cron/jobs.json`.
+Crontab: `crontab -l` on the server.
 
 ## OpenClaw integration
 
-- OpenClaw runs at `http://localhost:18789`
-- Cron jobs live in `~/.openclaw/cron/jobs.json`
-- The fitness agent ID is `fitness`
-- The agent's workspace is `~/.openclaw/agents/fitness/workspace/`
-- To trigger an immediate replan: inject a job with `deleteAfterRun: true`, `wakeMode: "now"`, cron `* * * * *`. The web API endpoint `POST /api/plan/constraints` does this automatically after saving constraints.
-- Jobs state (running/completed) is tracked in `~/.openclaw/cron/jobs-state.json`
+- Gateway: `http://localhost:18789`
+- Fitness agent ID: `fitness`
+- Agent workspace: `~/.openclaw/agents/fitness/workspace/`
+- Telegram bot (fitness): bot ID `8357659123`, user ID `7789196354`
 
-## Weekly constraints system
+To trigger an immediate replan: `POST /api/plan/constraints` automatically injects
+a one-shot job into `~/.openclaw/cron/jobs.json` with `deleteAfterRun: true` and
+`wakeMode: "now"`. OpenClaw picks it up within ~60 seconds.
 
-Users fill in fixed events (floorball training/game, tennis, rest days, etc.) at `/plan` in the web UI. Constraints are saved per week (Monday = week key) to `data/plan/constraints/<YYYY-MM-DD>.json`. On save, the web app injects a one-shot replan job into OpenClaw so the coach immediately re-plans the rest of the week around those constraints.
+## GitHub backup
 
-Past days are locked (read-only) in the UI. The UI defaults to the current week.
+Repo: `https://github.com/sachaaebischer/openclaw-backup` (private)
+PAT stored at: `~/.openclaw/github_pat`
+Script: `~/coach/scripts/push-backup.sh`
 
-On Sunday at 15:00 CET, an OpenClaw cron job checks if next week's constraints exist; if not, it sends a Telegram reminder.
+What's backed up:
+- `coach/` — full source code (no node_modules, no health data)
+- `openclaw-config/` — cron jobs, redacted OpenClaw config, pm2 dump
 
-## Data sources
-
-| Source | Adapter | What it provides |
-|--------|---------|-----------------|
-| Garmin | MCP (stdio, garmin-connect-mcp) | Activities, sleep, HRV, steps, VO2max |
-| Ultrahuman | REST adapter | HRV, recovery, readiness, sleep score |
-| Polar | MCP (http, running on :18790) | Activities, heart rate |
-| Withings | REST adapter (OAuth2) | Weight, body composition; tokens at `~/.openclaw/withings_tokens.json` |
+What's NOT backed up (secrets/live data):
+- `~/.openclaw/openclaw.json` — has all API keys (Anthropic, Garmin, Polar, Withings, Ultrahuman, Telegram, OpenRouter, Brave)
+- `~/.openclaw/withings_tokens.json` — OAuth tokens
+- All CSV/JSON data files in the data directory
 
 ## Important conventions
 
-- **All dates use local timezone** (`new Date().toLocaleDateString('sv')` not `.toISOString().slice(0,10)`)
-- **Atomic writes** everywhere: write to `.tmp`, then `fs.renameSync` to final path
-- **Zod schemas first**: add to `lib/src/schema.ts`, export from `lib/src/index.ts`, rebuild lib before using
-- **Path helpers**: add new paths to `lib/src/paths.ts`, don't hardcode paths in app code
-- **config/sources.json** controls which sources are active. Set `"enabled": false` on mock/test sources in production.
-
-## Telegram
-
-Fitness Telegram bot token is in the OpenClaw agent config (not in this repo). The user's Telegram ID is `7789196354`. Notifications go through OpenClaw's `delivery` system.
+- **Dates always use local timezone**: `new Date().toLocaleDateString('sv')` not `.toISOString().slice(0,10)`
+- **Atomic writes everywhere**: write to `.tmp`, then `fs.renameSync` to final path
+- **Zod schemas first**: add field to `lib/src/schema.ts` → rebuild lib → use in app
+- **Path helpers**: add new paths to `lib/src/paths.ts`, never hardcode paths in app code
+- **RSC/client boundary**: never import plain values (objects, constants) from `'use client'` modules into server components — only React components can cross that boundary

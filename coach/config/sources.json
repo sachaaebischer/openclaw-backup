@@ -1,96 +1,10 @@
 {
-  "$comment": "Each source connects to one MCP server and runs one or more 'fetches'. transport is either stdio (command/args/env) or http (url, for SSE/streamable-http MCP servers). 'kind' tells the normalizer how to map the tool's output: 'health' or 'activities'. The normalizer for each source name lives in apps/fetcher/src/normalizers/.",
+  "$comment": "This file is LEGACY — the current sync (apps/fetcher/src/sync.ts) uses hardcoded direct REST adapters for Ultrahuman, Polar, Withings, and Garmin-via-MCP. The credentials for each adapter are read from ~/.openclaw/openclaw.json (mcp.servers section). This file is kept for reference but is not read at runtime.",
   "sources": [
     {
       "name": "mock",
       "enabled": false,
-      "schedule": "0 * * * *",
-      "transport": {
-        "type": "stdio",
-        "command": "npx",
-        "args": [
-          "tsx",
-          "apps/fetcher/test/mock-mcp-server.ts"
-        ]
-      },
-      "fetches": [
-        {
-          "tool": "get_daily_health",
-          "args": {
-            "days": 14
-          },
-          "kind": "health"
-        },
-        {
-          "tool": "get_activities",
-          "args": {
-            "days": 14
-          },
-          "kind": "activities"
-        }
-      ]
-    },
-    {
-      "name": "polar",
-      "enabled": false,
-      "schedule": "0 6 * * *",
-      "transport": {
-        "type": "stdio",
-        "command": "REPLACE_WITH_YOUR_POLAR_MCP_COMMAND",
-        "args": [],
-        "env": {}
-      },
-      "fetches": [
-        {
-          "tool": "REPLACE_health_tool",
-          "args": {},
-          "kind": "health"
-        },
-        {
-          "tool": "REPLACE_exercises_tool",
-          "args": {},
-          "kind": "activities"
-        }
-      ]
-    },
-    {
-      "name": "garmin",
-      "enabled": false,
-      "schedule": "0 6 * * *",
-      "transport": {
-        "type": "stdio",
-        "command": "REPLACE",
-        "args": [],
-        "env": {}
-      },
-      "fetches": [
-        {
-          "tool": "REPLACE",
-          "args": {},
-          "kind": "health"
-        },
-        {
-          "tool": "REPLACE",
-          "args": {},
-          "kind": "activities"
-        }
-      ]
-    },
-    {
-      "name": "ultrahuman",
-      "enabled": false,
-      "schedule": "0 6 * * *",
-      "transport": {
-        "type": "http",
-        "url": "https://REPLACE-with-mcp-endpoint"
-      },
-      "fetches": [
-        {
-          "tool": "REPLACE",
-          "args": {},
-          "kind": "health"
-        }
-      ]
+      "note": "Test-only MCP source. Only used when running apps/fetcher/test/mock-mcp-server.ts manually."
     }
   ]
 }

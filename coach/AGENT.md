@@ -7,13 +7,20 @@ normalized files into `data/`. You read those files and write two things back.
 
 ## What you READ (never edit these)
 
+-  — the user's exercise library (name, notes, default sets/reps/weight). When planning gym sessions, use exercise names from this catalog and respect their default_sets/default_reps.
 - `data/health/daily.csv` — daily sleep, HRV, resting HR, recovery, readiness per source.
+-  — the user's exercise library (name, notes, default sets/reps/weight). When planning gym sessions, use exercise names from this catalog and respect their default_sets/default_reps.
 - `data/activities/activities.csv` — every workout (floorball, bike, run, strength…).
+-  — the user's exercise library (name, notes, default sets/reps/weight). When planning gym sessions, use exercise names from this catalog and respect their default_sets/default_reps.
 - `data/gym/log.csv` — flat per-set gym log (what was actually lifted).
+-  — the user's exercise library (name, notes, default sets/reps/weight). When planning gym sessions, use exercise names from this catalog and respect their default_sets/default_reps.
 - `data/gym/sessions/<date>.json` — full detail of each logged gym session.
+-  — the user's exercise library (name, notes, default sets/reps/weight). When planning gym sessions, use exercise names from this catalog and respect their default_sets/default_reps.
 - `data/state/summary.json` — pre-computed 7d/28d rollups (averages, load, tonnage).
   Prefer this for quick situational awareness instead of re-aggregating by hand.
+-  — the user's exercise library (name, notes, default sets/reps/weight). When planning gym sessions, use exercise names from this catalog and respect their default_sets/default_reps.
 - `data/state/last_sync.json` — whether each tracker synced OK and when.
+-  — the user's exercise library (name, notes, default sets/reps/weight). When planning gym sessions, use exercise names from this catalog and respect their default_sets/default_reps.
 - `data/plan/constraints/<week_start>.json` — fixed sessions Sacha has committed to
   for the week being planned (floorball training/games, tennis, etc.). **Plan around
   these — do not schedule conflicting sessions on those days.**
@@ -46,14 +53,20 @@ The exact columns are documented in [`data/README.md`](data/README.md).
 
 ## Rules
 
+-  — the user's exercise library (name, notes, default sets/reps/weight). When planning gym sessions, use exercise names from this catalog and respect their default_sets/default_reps.
 - Only ever write the four files listed above. Everything else is owned by the
   automation or the gym-logger.
+-  — the user's exercise library (name, notes, default sets/reps/weight). When planning gym sessions, use exercise names from this catalog and respect their default_sets/default_reps.
 - Keep `week_start` a Monday (YYYY-MM-DD) and include all 7 days.
+-  — the user's exercise library (name, notes, default sets/reps/weight). When planning gym sessions, use exercise names from this catalog and respect their default_sets/default_reps.
 - Don't invent metrics — if a value is missing in the CSVs, treat it as unknown.
+-  — the user's exercise library (name, notes, default sets/reps/weight). When planning gym sessions, use exercise names from this catalog and respect their default_sets/default_reps.
 - Respect recovery signals: low HRV / poor sleep / high recent load → ease off.
 
 ## Helper commands
 
+-  — the user's exercise library (name, notes, default sets/reps/weight). When planning gym sessions, use exercise names from this catalog and respect their default_sets/default_reps.
 - `npm run summarize` — regenerate `data/state/summary.json` (the fetcher also does
   this on schedule; run it if you want the freshest rollups before analysing).
+-  — the user's exercise library (name, notes, default sets/reps/weight). When planning gym sessions, use exercise names from this catalog and respect their default_sets/default_reps.
 - `npm run validate-plan` — validate `data/plan/current.json` against the schema.
