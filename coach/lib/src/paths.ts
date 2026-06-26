@@ -34,6 +34,7 @@ export const paths = {
   analysisMd: () => path.join(dataDir(), "analysis", "latest.md"),
   constraintsDir: () => path.join(dataDir(), "plan", "constraints"),
   constraints: (weekStart: string) => path.join(dataDir(), "plan", "constraints", `${weekStart}.json`),
+  gymCatalog: () => path.join(dataDir(), "gym", "catalog.json"),
   syncState: () => path.join(dataDir(), "state", "last_sync.json"),
   rawDir: (source: string) => path.join(dataDir(), "raw", source),
   raw: (source: string, date: string) =>

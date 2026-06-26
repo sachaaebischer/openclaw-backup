@@ -186,3 +186,18 @@ export const WeekConstraintsSchema = z.object({
   fixed_events: z.array(ConstrainedEventSchema).default([]),
 });
 export type WeekConstraints = z.infer<typeof WeekConstraintsSchema>;
+
+/** An exercise in the user's personal catalog (persisted in data/gym/catalog.json). */
+export const ExerciseCatalogItemSchema = z.object({
+  name: z.string(),
+  notes: z.string().default(""),
+  default_sets: z.number().int().nullable().default(null),
+  default_reps: z.string().default(""),
+  default_weight: z.number().nullable().default(null),
+});
+export type ExerciseCatalogItem = z.infer<typeof ExerciseCatalogItemSchema>;
+
+export const ExerciseCatalogSchema = z.object({
+  exercises: z.array(ExerciseCatalogItemSchema).default([]),
+});
+export type ExerciseCatalog = z.infer<typeof ExerciseCatalogSchema>;

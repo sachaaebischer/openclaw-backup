@@ -9,7 +9,7 @@ const intensityColor: Record<string, string> = {
   easy: 'bg-good/20 text-good',
 };
 
-export const typeIcon: Record<string, string> = {
+const typeIcon: Record<string, string> = {
   gym: '🏋️',
   floorball: '🏑',
   bike: '🚴',

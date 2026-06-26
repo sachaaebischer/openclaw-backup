@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getRecentGymSessions, todayStr } from "@/lib/data";
 import { readPlan } from "@coach/lib";
+import { DateSessionPicker } from "@/app/components/DateSessionPicker";
 
 export const dynamic = "force-dynamic";
 
@@ -21,7 +22,10 @@ export default async function GymIndexPage() {
   return (
     <div className="space-y-6">
       <section>
-        <h2 className="mb-2 text-sm font-semibold text-muted">Today</h2>
+        <div className="mb-2 flex items-center">
+          <h2 className="text-sm font-semibold text-muted">Today</h2>
+          <Link href="/gym/exercises" className="ml-auto text-xs text-accent">Manage exercises →</Link>
+        </div>
         {todayGym ? (
           <Link href={`/gym/${today}`} className="card flex items-center gap-3 hover:bg-white/5">
             <span className="text-2xl">🏋️</span>
@@ -32,13 +36,20 @@ export default async function GymIndexPage() {
             <span className="btn ml-auto">Start →</span>
           </Link>
         ) : (
-          <div className="card text-sm text-muted">
-            No gym session planned for today.{" "}
-            <Link href={`/gym/${today}`} className="text-accent">
-              Log an ad-hoc session →
-            </Link>
-          </div>
+          <Link href={`/gym/${today}`} className="card flex items-center gap-3 hover:bg-white/5">
+            <span className="text-2xl">🏋️</span>
+            <div>
+              <div className="font-medium">Ad-hoc session</div>
+              <div className="text-xs text-muted">{today} · no session planned</div>
+            </div>
+            <span className="btn ml-auto">Log →</span>
+          </Link>
         )}
+      </section>
+
+      <section>
+        <h2 className="mb-2 text-sm font-semibold text-muted">Open session for a date</h2>
+        <DateSessionPicker />
       </section>
 
       {gymDays.length > 0 && (

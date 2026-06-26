@@ -26,6 +26,8 @@ import {
   ConstrainedEventSchema,
   WeekConstraints,
   WeekConstraintsSchema,
+  ExerciseCatalog,
+  ExerciseCatalogSchema,
 } from "./schema.js";
 
 /* ------------------------------- health ------------------------------- */
@@ -169,6 +171,37 @@ export async function lastExercisePerformance(
     }
   }
   return null;
+}
+
+
+/* ----------------------------- exercise catalog ----------------------- */
+
+export async function readExerciseCatalog(): Promise<ExerciseCatalog> {
+  const raw = await readJson<unknown>(paths.gymCatalog());
+  return raw ? ExerciseCatalogSchema.parse(raw) : { exercises: [] };
+}
+
+export async function writeExerciseCatalog(catalog: ExerciseCatalog): Promise<void> {
+  await writeJsonAtomic(paths.gymCatalog(), ExerciseCatalogSchema.parse(catalog));
+}
+
+export async function allExerciseHistory(
+  name: string,
+): Promise<{ date: string; sets: { set_no: number; weight: number | null; reps: number | null; rpe: number | null }[] }[]> {
+  const sessions = (await readGymSessions()).sort((a, b) => b.date.localeCompare(a.date));
+  const result: { date: string; sets: { set_no: number; weight: number | null; reps: number | null; rpe: number | null }[] }[] = [];
+  for (const s of sessions) {
+    const ex = s.exercises.find((e) => e.name.toLowerCase() === name.toLowerCase());
+    if (ex && ex.sets.some((st) => st.done)) {
+      result.push({
+        date: s.date,
+        sets: ex.sets
+          .filter((st) => st.done)
+          .map((st) => ({ set_no: st.set_no, weight: st.weight, reps: st.reps, rpe: st.rpe ?? null })),
+      });
+    }
+  }
+  return result;
 }
 
 /* --------------------------------- plan ------------------------------- */

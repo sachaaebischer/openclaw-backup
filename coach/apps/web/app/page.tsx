@@ -2,7 +2,7 @@ import Link from "next/link";
 import { getDashboardData, todayStr } from "@/lib/data";
 import { LoadChart, SleepHrvChart } from "@/app/components/Charts";
 import { Markdown } from "@/app/components/Markdown";
-import { PlanSessionCard, typeIcon } from "@/app/components/PlanSessionCard";
+import { PlanSessionCard } from "@/app/components/PlanSessionCard";
 import type { HealthDaily } from "@coach/lib";
 
 export const dynamic = "force-dynamic";
@@ -63,6 +63,16 @@ function Stat({
   );
 }
 
+
+const typeIcon: Record<string, string> = {
+  gym: "🏋️",
+  floorball: "🏑",
+  bike: "🚴",
+  cycling: "🚴",
+  run: "🏃",
+  running: "🏃",
+  rest: "😴",
+};
 
 export default async function DashboardPage() {
   const { health, latest, prev, activities, plan, analysis, sync } = await getDashboardData();

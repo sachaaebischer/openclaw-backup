@@ -4,6 +4,8 @@ import {
   GymSession,
   HealthDaily,
   lastExercisePerformance,
+  readExerciseCatalog,
+  ExerciseCatalogItem,
   Plan,
   readActivities,
   readAnalysis,
@@ -85,11 +87,13 @@ export interface GymDayData {
   session: GymSession;
   lastPerf: LastPerf;
   hasSaved: boolean;
+  catalog: ExerciseCatalogItem[];
 }
 
 /** Builds the session to log for a date: the saved one, or a fresh one from the plan. */
 export async function getGymDayData(date: string): Promise<GymDayData> {
-  const [saved, plan] = await Promise.all([readGymSession(date), readPlan()]);
+  const [saved, plan, catalog] = await Promise.all([readGymSession(date), readPlan(), readExerciseCatalog()]);
+  const catalogMap = new Map(catalog.exercises.map((e) => [e.name.toLowerCase(), e]));
 
   let session: GymSession;
   if (saved) {
@@ -110,11 +114,11 @@ export async function getGymDayData(date: string): Promise<GymDayData> {
         name: p.name,
         target_sets: p.target_sets,
         target_reps: p.target_reps,
-        notes: p.notes,
+        notes: catalogMap.get(p.name.toLowerCase())?.notes ?? p.notes,
         sets: Array.from({ length: Math.max(1, p.target_sets ?? 3) }, (_, i) => ({
           set_no: i + 1,
           reps: null,
-          weight: p.target_weight ?? null,
+          weight: p.target_weight ?? catalogMap.get(p.name.toLowerCase())?.default_weight ?? null,
           rpe: null,
           done: false,
         })),
@@ -128,7 +132,7 @@ export async function getGymDayData(date: string): Promise<GymDayData> {
     lastPerf[name] = await lastExercisePerformance(name, date);
   }
 
-  return { session, lastPerf, hasSaved: !!saved };
+  return { session, lastPerf, hasSaved: !!saved, catalog: catalog.exercises };
 }
 
 export async function getRecentGymSessions(limit = 10): Promise<GymSession[]> {
