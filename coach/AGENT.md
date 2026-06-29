@@ -22,8 +22,10 @@ normalized files into `data/`. You read those files and write two things back.
 - `data/state/last_sync.json` — whether each tracker synced OK and when.
 -  — the user's exercise library (name, notes, default sets/reps/weight). When planning gym sessions, use exercise names from this catalog and respect their default_sets/default_reps.
 - `data/plan/constraints/<week_start>.json` — fixed sessions Sacha has committed to
-  for the week being planned (floorball training/games, tennis, etc.). **Plan around
-  these — do not schedule conflicting sessions on those days.**
+  for the week being planned (floorball training/games, tennis, etc.).
+  **HARD CONSTRAINTS — non-negotiable. Do NOT move, skip, or override them for any reason
+  (not for load balance, not for recovery, not because something else would be better).
+  Always honour constraints first; adapt everything else around them.**
 
 The exact columns are documented in [`data/README.md`](data/README.md).
 
@@ -70,3 +72,6 @@ The exact columns are documented in [`data/README.md`](data/README.md).
   this on schedule; run it if you want the freshest rollups before analysing).
 -  — the user's exercise library (name, notes, default sets/reps/weight). When planning gym sessions, use exercise names from this catalog and respect their default_sets/default_reps.
 - `npm run validate-plan` — validate `data/plan/current.json` against the schema.
+
+
+> **REMINDER**: Constraints in data/plan/constraints/ are ABSOLUTE. Never override them.

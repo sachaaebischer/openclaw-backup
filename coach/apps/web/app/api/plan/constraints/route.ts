@@ -40,6 +40,14 @@ export async function POST(req: Request) {
   return NextResponse.json({ ok: true });
 }
 
+// Returns a cron expression that fires exactly once, ~2 minutes from now (UTC).
+// Combined with deleteAfterRun:true this guarantees a single execution and prevents
+// the job from repeating every minute if deleteAfterRun is delayed.
+function oneShotCron(): string {
+  const t = new Date(Date.now() + 2 * 60 * 1000);
+  return `${t.getUTCMinutes()} ${t.getUTCHours()} ${t.getUTCDate()} ${t.getUTCMonth() + 1} *`;
+}
+
 function injectReplanJob(weekStart: string): void {
   const jobsPath = path.join(os.homedir(), ".openclaw", "cron", "jobs.json");
   const raw = JSON.parse(fs.readFileSync(jobsPath, "utf8"));
@@ -57,22 +65,29 @@ function injectReplanJob(weekStart: string): void {
     enabled: true,
     deleteAfterRun: true,
     createdAtMs: Date.now(),
-    schedule: { kind: "cron", expr: "* * * * *", tz: "Europe/Zurich" },
+    // One-shot schedule: fires exactly once at a specific UTC time ~2 min from now.
+    schedule: { kind: "cron", expr: oneShotCron(), tz: "UTC" },
     sessionTarget: "isolated",
-    wakeMode: "now",
     payload: {
       kind: "agentTurn",
       message:
-        `Constraints for the week of ${weekStart} were just updated via the dashboard. Re-plan the week now.\n\n` +
-        `Rules:\n` +
-        `- Read data/plan/constraints/${weekStart}.json for Sacha's fixed committed events — these cannot be moved.\n` +
-        `- Do NOT change any sessions scheduled before today (${today}). Only re-plan from today onwards.\n` +
-        `- Follow the full AGENT.md workflow: check summary.json, health/daily.csv, activities.csv, gym/log.csv.\n` +
-        `- Write the updated plan to data/plan/current.json (week_start = ${weekStart}), then run:\n` +
-        `  COACH_DATA_DIR=/home/sacha/.openclaw/agents/fitness/workspace/data npm run validate-plan --workspace @coach/fetcher\n` +
-        `- Fix any schema errors until it says "Plan OK".\n` +
-        `- Write updated data/analysis/latest.md.\n` +
-        `- Send Sacha a brief Telegram message summarising what changed.`,
+        `CONSTRAINTS UPDATE — Re-plan the week of ${weekStart} NOW.\n\n` +
+        `HARD RULES (non-negotiable — do NOT deviate under any circumstances):\n` +
+        `- The fixed_events in data/plan/constraints/${weekStart}.json are ABSOLUTE COMMITMENTS.\n` +
+        `  They cannot be moved, skipped, or overridden — not for training load, not for recovery, not for any reason.\n` +
+        `- Do NOT change any sessions already completed before today (${today}). Only re-plan from today onwards.\n` +
+        `- If a constraint conflicts with good training practice, ALWAYS honour the constraint and adjust everything else around it.\n\n` +
+        `Workflow:\n` +
+        `1. Read data/plan/constraints/${weekStart}.json — note every fixed_event date and type.\n` +
+        `2. Read data/state/summary.json, data/health/daily.csv, data/activities/activities.csv, data/gym/log.csv.\n` +
+        `3. Write an updated plan to data/plan/current.json (week_start = ${weekStart}) that:\n` +
+        `   - Places each fixed_event exactly on its stated date with no exceptions.\n` +
+        `   - Fills the remaining days with appropriate training/rest.\n` +
+        `4. Run validation:\n` +
+        `   COACH_DATA_DIR=/home/sacha/.openclaw/agents/fitness/workspace/data npm run validate-plan --workspace @coach/fetcher\n` +
+        `   Fix any schema errors until it says "Plan OK".\n` +
+        `5. Write updated data/analysis/latest.md.\n` +
+        `6. Send Sacha ONE concise Telegram message summarising what changed. Do not send multiple messages.`,
       timeoutSeconds: 600,
     },
     delivery: {
